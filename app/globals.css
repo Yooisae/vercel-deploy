@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+}
+
+:root {
+  --theme-color: #6366f1;
+  --theme-rgb: 99, 102, 241;
+  --theme-light: #818cf8;
+  --theme-dark: #4f46e5;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--theme-rgb), 0.3) transparent;
+}
+
+body {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  background: linear-gradient(135deg, #0f0a2e 0%, #1a1145 30%, #0f172a 70%, #0c0a1a 100%);
+  min-height: 100vh;
+  color: #e2e8f0;
+  overflow-x: hidden;
+  margin: 0;
+}
+
+/* 글래스모피즘 */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-hover:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(var(--theme-rgb), 0.3);
+}
+
+/* 글로우 */
+.glow {
+  box-shadow: 0 0 20px rgba(var(--theme-rgb), 0.15), 0 0 60px rgba(var(--theme-rgb), 0.05);
+}
+
+/* 그라데이션 텍스트 */
+.gradient-text {
+  background: linear-gradient(135deg, var(--theme-light) 0%, #f472b6 50%, #fb923c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 테마 컬러 유틸리티 */
+.bg-theme { background-color: var(--theme-color); }
+.bg-theme-light { background-color: var(--theme-light); }
+.bg-theme-dark { background-color: var(--theme-dark); }
+.bg-theme\/10 { background-color: rgba(var(--theme-rgb), 0.1); }
+.bg-theme\/20 { background-color: rgba(var(--theme-rgb), 0.2); }
+.bg-theme\/30 { background-color: rgba(var(--theme-rgb), 0.3); }
+.text-theme { color: var(--theme-color); }
+.text-theme-light { color: var(--theme-light); }
+.border-theme\/30 { border-color: rgba(var(--theme-rgb), 0.3); }
+.border-theme\/50 { border-color: rgba(var(--theme-rgb), 0.5); }
+.shadow-theme { box-shadow: 0 0 20px rgba(var(--theme-rgb), 0.3); }
+
+/* 배경 그리드 */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(var(--theme-rgb), 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--theme-rgb), 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -50px) scale(1.1); }
+  50% { transform: translate(-20px, 20px) scale(0.9); }
+  75% { transform: translate(20px, 30px) scale(1.05); }
+}
+
+.animate-blob {
+  animation: blob 8s ease-in-out infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--theme-rgb), 0.3);
+  border-radius: 3px;
+}

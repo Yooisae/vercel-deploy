@@ -1,17 +1,20 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Droplets, BookOpen, Dumbbell, Code2, Brain } from 'lucide-react'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
 
-const initialHabits = [
-  { id: 1, name: '물 마시기', icon: Droplets, target: 8, current: 5, color: '#3b82f6', unit: '잔' },
-  { id: 2, name: '독서', icon: BookOpen, target: 30, current: 20, color: '#a855f7', unit: '분' },
-  { id: 3, name: '운동', icon: Dumbbell, target: 1, current: 1, color: '#10b981', unit: '회' },
-  { id: 4, name: '코딩', icon: Code2, target: 4, current: 3, color: '#f97316', unit: '시간' },
-  { id: 5, name: '명상', icon: Brain, target: 15, current: 0, color: '#ec4899', unit: '분' },
+const iconMap = { Droplets, BookOpen, Dumbbell, Code2, Brain }
+
+const defaultHabits = [
+  { id: 1, name: '물 마시기', iconName: 'Droplets', target: 8, current: 5, color: '#3b82f6', unit: '잔' },
+  { id: 2, name: '독서', iconName: 'BookOpen', target: 30, current: 20, color: '#a855f7', unit: '분' },
+  { id: 3, name: '운동', iconName: 'Dumbbell', target: 1, current: 1, color: '#10b981', unit: '회' },
+  { id: 4, name: '코딩', iconName: 'Code2', target: 4, current: 3, color: '#f97316', unit: '시간' },
+  { id: 5, name: '명상', iconName: 'Brain', target: 15, current: 0, color: '#ec4899', unit: '분' },
 ]
 
 export default function HabitTracker() {
-  const [habits, setHabits] = useState(initialHabits)
+  const [habits, setHabits] = useLocalStorage('pulse-habits', defaultHabits)
 
   const increment = (id) => {
     setHabits(habits.map((h) =>
@@ -30,7 +33,7 @@ export default function HabitTracker() {
 
       <div className="space-y-3">
         {habits.map((habit) => {
-          const Icon = habit.icon
+          const Icon = iconMap[habit.iconName]
           const progress = (habit.current / habit.target) * 100
           const isComplete = habit.current >= habit.target
 

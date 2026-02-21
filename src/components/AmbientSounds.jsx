@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { CloudRain, Wind, Flame, Waves, Trees, Volume2, VolumeX } from 'lucide-react'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
 
 const sounds = [
   { id: 'rain', label: '비', icon: CloudRain, color: '#3b82f6' },
@@ -11,8 +12,8 @@ const sounds = [
 ]
 
 export default function AmbientSounds() {
-  const [activesSounds, setActiveSounds] = useState({})
-  const [masterVolume, setMasterVolume] = useState(70)
+  const [activesSounds, setActiveSounds] = useLocalStorage('pulse-ambient-sounds', {})
+  const [masterVolume, setMasterVolume] = useLocalStorage('pulse-ambient-volume', 70)
 
   const toggleSound = (id) => {
     setActiveSounds((prev) => {
@@ -43,7 +44,7 @@ export default function AmbientSounds() {
         <h3 className="text-lg font-semibold text-white">분위기 사운드</h3>
         <div className="flex items-center gap-2">
           {activeCount > 0 ? (
-            <Volume2 size={16} className="text-indigo-400" />
+            <Volume2 size={16} style={{ color: 'var(--theme-light)' }} />
           ) : (
             <VolumeX size={16} className="text-slate-500" />
           )}
@@ -60,7 +61,8 @@ export default function AmbientSounds() {
           max="100"
           value={masterVolume}
           onChange={(e) => setMasterVolume(Number(e.target.value))}
-          className="flex-1 h-1 rounded-full appearance-none bg-white/10 accent-indigo-500"
+          className="flex-1 h-1 rounded-full appearance-none bg-white/10"
+          style={{ accentColor: 'var(--theme-color)' }}
         />
         <span className="text-xs text-slate-400 w-8 text-right">{masterVolume}%</span>
       </div>
@@ -131,7 +133,8 @@ export default function AmbientSounds() {
           {Array.from({ length: 20 }).map((_, i) => (
             <motion.div
               key={i}
-              className="w-1 rounded-full bg-gradient-to-t from-indigo-500 to-purple-500"
+              className="w-1 rounded-full"
+              style={{ background: `linear-gradient(to top, var(--theme-color), var(--theme-light))` }}
               animate={{
                 height: [4, Math.random() * 28 + 4, 4],
               }}

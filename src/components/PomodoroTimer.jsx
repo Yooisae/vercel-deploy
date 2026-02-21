@@ -1,18 +1,21 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Play, Pause, RotateCcw, Coffee } from 'lucide-react'
+import { useTheme } from '@/contexts/ThemeContext'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
 
 const MODES = {
-  work: { label: '집중', duration: 25 * 60, color: '#6366f1' },
+  work: { label: '집중', duration: 25 * 60, color: null },
   short: { label: '짧은 휴식', duration: 5 * 60, color: '#10b981' },
   long: { label: '긴 휴식', duration: 15 * 60, color: '#f472b6' },
 }
 
 export default function PomodoroTimer() {
+  const { themeColor } = useTheme()
   const [mode, setMode] = useState('work')
   const [timeLeft, setTimeLeft] = useState(MODES.work.duration)
   const [isRunning, setIsRunning] = useState(false)
-  const [sessions, setSessions] = useState(0)
+  const [sessions, setSessions] = useLocalStorage('pulse-pomodoro-sessions', 0)
   const intervalRef = useRef(null)
 
   useEffect(() => {
@@ -43,7 +46,7 @@ export default function PomodoroTimer() {
   const progress = 1 - timeLeft / MODES[mode].duration
   const circumference = 2 * Math.PI * 90
   const strokeDashoffset = circumference * (1 - progress)
-  const currentColor = MODES[mode].color
+  const currentColor = MODES[mode].color || themeColor
 
   return (
     <motion.div

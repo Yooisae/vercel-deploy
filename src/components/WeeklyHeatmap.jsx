@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
+import { useTheme } from '@/contexts/ThemeContext'
 
 const days = ['월', '화', '수', '목', '금', '토', '일']
 const hours = Array.from({ length: 12 }, (_, i) => i + 8)
 
-// 더미 활동 데이터
 const activityData = {}
 days.forEach((day, di) => {
   hours.forEach((hour) => {
@@ -13,14 +13,11 @@ days.forEach((day, di) => {
   })
 })
 
-const intensityColors = [
-  'bg-white/5',
-  'bg-indigo-500/20',
-  'bg-indigo-500/40',
-  'bg-indigo-500/70',
-]
+const intensityOpacities = [0.05, 0.2, 0.4, 0.7]
 
 export default function WeeklyHeatmap() {
+  const { themeColor } = useTheme()
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -36,8 +33,12 @@ export default function WeeklyHeatmap() {
         <div className="flex items-center gap-2 text-xs text-slate-400">
           <span>적음</span>
           <div className="flex gap-1">
-            {intensityColors.map((c, i) => (
-              <div key={i} className={`w-3 h-3 rounded-sm ${c}`} />
+            {intensityOpacities.map((op, i) => (
+              <div
+                key={i}
+                className="w-3 h-3 rounded-sm"
+                style={{ backgroundColor: i === 0 ? 'rgba(255,255,255,0.05)' : `${themeColor}${Math.round(op * 255).toString(16).padStart(2, '0')}` }}
+              />
             ))}
           </div>
           <span>많음</span>
@@ -46,7 +47,6 @@ export default function WeeklyHeatmap() {
 
       <div className="overflow-x-auto">
         <div className="grid gap-1" style={{ gridTemplateColumns: `40px repeat(${hours.length}, 1fr)` }}>
-          {/* 헤더 */}
           <div />
           {hours.map((h) => (
             <div key={h} className="text-[10px] text-slate-500 text-center pb-1">
@@ -54,26 +54,29 @@ export default function WeeklyHeatmap() {
             </div>
           ))}
 
-          {/* 데이터 */}
           {days.map((day, di) => (
-            <>
-              <div key={`label-${day}`} className="text-xs text-slate-400 flex items-center">
+            <div key={day} className="contents">
+              <div className="text-xs text-slate-400 flex items-center">
                 {day}
               </div>
               {hours.map((hour) => {
                 const intensity = activityData[`${di}-${hour}`]
+                const bg = intensity === 0
+                  ? 'rgba(255,255,255,0.05)'
+                  : `${themeColor}${Math.round(intensityOpacities[intensity] * 255).toString(16).padStart(2, '0')}`
                 return (
                   <motion.div
                     key={`${di}-${hour}`}
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: (di * hours.length + hours.indexOf(hour)) * 0.01 }}
-                    className={`h-6 rounded-sm ${intensityColors[intensity]} cursor-default transition-all hover:ring-1 hover:ring-indigo-400/50`}
+                    className="h-6 rounded-sm cursor-default transition-all hover:ring-1"
+                    style={{ backgroundColor: bg, '--tw-ring-color': `${themeColor}80` }}
                     title={`${day} ${hour}시: ${['활동 없음', '낮음', '보통', '높음'][intensity]}`}
                   />
                 )
               })}
-            </>
+            </div>
           ))}
         </div>
       </div>

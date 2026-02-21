@@ -1,25 +1,27 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { Bell, Search, User } from 'lucide-react'
 
+function getGreeting(hour) {
+  if (hour < 6) return '늦은 밤이에요'
+  if (hour < 12) return '좋은 아침이에요'
+  if (hour < 18) return '좋은 오후에요'
+  return '좋은 저녁이에요'
+}
+
 export default function Header() {
+  const [mounted, setMounted] = useState(false)
   const [time, setTime] = useState(new Date())
-  const [greeting, setGreeting] = useState('')
 
   useEffect(() => {
+    setMounted(true)
     const timer = setInterval(() => setTime(new Date()), 1000)
     return () => clearInterval(timer)
   }, [])
-
-  useEffect(() => {
-    const hour = time.getHours()
-    if (hour < 6) setGreeting('늦은 밤이에요')
-    else if (hour < 12) setGreeting('좋은 아침이에요')
-    else if (hour < 18) setGreeting('좋은 오후에요')
-    else setGreeting('좋은 저녁이에요')
-  }, [time])
 
   return (
     <motion.header
@@ -29,10 +31,13 @@ export default function Header() {
     >
       <div>
         <h1 className="text-3xl font-bold">
-          {greeting} <span className="gradient-text">✨</span>
+          {mounted ? getGreeting(time.getHours()) : '\u00A0'}{' '}
+          <span className="gradient-text">✨</span>
         </h1>
-        <p className="text-slate-400 mt-1">
-          {format(time, 'yyyy년 M월 d일 EEEE', { locale: ko })} · {format(time, 'HH:mm:ss')}
+        <p className="text-slate-400 mt-1" suppressHydrationWarning>
+          {mounted
+            ? `${format(time, 'yyyy년 M월 d일 EEEE', { locale: ko })} · ${format(time, 'HH:mm:ss')}`
+            : '\u00A0'}
         </p>
       </div>
 
@@ -63,7 +68,8 @@ export default function Header() {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center"
+          className="w-10 h-10 rounded-xl flex items-center justify-center"
+          style={{ background: `linear-gradient(135deg, var(--theme-color), var(--theme-dark))` }}
         >
           <User size={18} className="text-white" />
         </motion.button>

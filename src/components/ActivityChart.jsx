@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
+import { useTheme } from '@/contexts/ThemeContext'
 
 const data = [
   { name: '월', tasks: 4, focus: 2.5 },
@@ -27,6 +28,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 }
 
 export default function ActivityChart() {
+  const { themeColor } = useTheme()
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -41,7 +43,7 @@ export default function ActivityChart() {
         </div>
         <div className="flex gap-4 text-xs">
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
+            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: 'var(--theme-color)' }} />
             작업 완료
           </span>
           <span className="flex items-center gap-1.5">
@@ -55,8 +57,8 @@ export default function ActivityChart() {
         <AreaChart data={data}>
           <defs>
             <linearGradient id="colorTasks" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+              <stop offset="5%" stopColor={themeColor} stopOpacity={0.3} />
+              <stop offset="95%" stopColor={themeColor} stopOpacity={0} />
             </linearGradient>
             <linearGradient id="colorFocus" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#f472b6" stopOpacity={0.3} />
@@ -70,7 +72,7 @@ export default function ActivityChart() {
           <Area
             type="monotone"
             dataKey="tasks"
-            stroke="#6366f1"
+            stroke={themeColor}
             strokeWidth={2.5}
             fillOpacity={1}
             fill="url(#colorTasks)"

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Trash2, Check, Circle, Star } from 'lucide-react'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
 
-const initialTodos = [
+const defaultTodos = [
   { id: 1, text: 'React 프로젝트 완성하기', done: false, starred: true, priority: 'high' },
   { id: 2, text: '디자인 시스템 문서 작성', done: false, starred: false, priority: 'medium' },
   { id: 3, text: '코드 리뷰 진행', done: true, starred: false, priority: 'low' },
@@ -17,7 +18,7 @@ const priorityColors = {
 }
 
 export default function TodoList() {
-  const [todos, setTodos] = useState(initialTodos)
+  const [todos, setTodos] = useLocalStorage('pulse-todos', defaultTodos)
   const [newTodo, setNewTodo] = useState('')
   const [filter, setFilter] = useState('all')
 
@@ -69,7 +70,8 @@ export default function TodoList() {
       {/* 진행률 바 */}
       <div className="w-full h-1.5 rounded-full bg-white/5 mb-4 overflow-hidden">
         <motion.div
-          className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-pink-500"
+          className="h-full rounded-full"
+          style={{ background: `linear-gradient(to right, var(--theme-color), #ec4899)` }}
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -82,11 +84,12 @@ export default function TodoList() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`text-xs px-3 py-1.5 rounded-lg transition-all ${
+            className="text-xs px-3 py-1.5 rounded-lg transition-all"
+            style={
               filter === f
-                ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-                : 'text-slate-400 hover:text-white hover:bg-white/5'
-            }`}
+                ? { backgroundColor: 'rgba(var(--theme-rgb), 0.2)', color: 'var(--theme-light)', border: '1px solid rgba(var(--theme-rgb), 0.3)' }
+                : { color: '#94a3b8' }
+            }
           >
             {f === 'all' ? '전체' : f === 'active' ? '진행' : f === 'done' ? '완료' : '중요'}
           </button>
@@ -101,13 +104,15 @@ export default function TodoList() {
           onChange={(e) => setNewTodo(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && addTodo()}
           placeholder="새 할 일 추가..."
-          className="flex-1 bg-white/5 rounded-xl px-4 py-2.5 text-sm border border-white/5 focus:border-indigo-500/30 outline-none transition-colors placeholder:text-slate-500"
+          className="flex-1 bg-white/5 rounded-xl px-4 py-2.5 text-sm border border-white/5 outline-none transition-colors placeholder:text-slate-500"
+          style={{ '--tw-ring-color': 'rgba(var(--theme-rgb), 0.3)' }}
         />
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={addTodo}
-          className="w-10 h-10 rounded-xl bg-indigo-500 flex items-center justify-center text-white"
+          className="w-10 h-10 rounded-xl flex items-center justify-center text-white"
+          style={{ backgroundColor: 'var(--theme-color)' }}
         >
           <Plus size={18} />
         </motion.button>
@@ -132,7 +137,7 @@ export default function TodoList() {
                 {todo.done ? (
                   <Check size={18} className="text-emerald-400" />
                 ) : (
-                  <Circle size={18} className="text-slate-500 hover:text-indigo-400 transition-colors" />
+                  <Circle size={18} className="text-slate-500 transition-colors" style={{ '--hover-color': 'var(--theme-light)' }} />
                 )}
               </button>
               <span className={`flex-1 text-sm ${todo.done ? 'line-through text-slate-500' : 'text-slate-200'}`}>

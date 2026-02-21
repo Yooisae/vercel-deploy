@@ -1,30 +1,33 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Moon, Sun, Bell, Globe, Palette, Shield, Monitor } from 'lucide-react'
+import { useTheme } from '@/contexts/ThemeContext'
+import { Moon, Bell, Globe, Palette, Shield, Monitor, Check } from 'lucide-react'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
 
-const Toggle = ({ enabled, onToggle }) => (
-  <button
-    onClick={onToggle}
-    className={`relative w-11 h-6 rounded-full transition-colors ${
-      enabled ? 'bg-indigo-500' : 'bg-white/10'
-    }`}
-  >
-    <motion.div
-      className="absolute top-1 w-4 h-4 rounded-full bg-white"
-      animate={{ left: enabled ? 24 : 4 }}
-      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-    />
-  </button>
-)
+function Toggle({ enabled, onToggle }) {
+  return (
+    <button
+      onClick={onToggle}
+      className="relative w-11 h-6 rounded-full transition-colors"
+      style={{ backgroundColor: enabled ? 'var(--theme-color)' : 'rgba(255,255,255,0.1)' }}
+    >
+      <motion.div
+        className="absolute top-1 w-4 h-4 rounded-full bg-white"
+        animate={{ left: enabled ? 24 : 4 }}
+        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+      />
+    </button>
+  )
+}
 
 export default function SettingsPanel() {
-  const [settings, setSettings] = useState({
+  const { themeColor, setThemeColor, themes } = useTheme()
+  const [settings, setSettings] = useLocalStorage('pulse-settings', {
     darkMode: true,
     notifications: true,
     sound: false,
     autoSave: true,
     analytics: false,
-    language: 'ko',
   })
 
   const toggle = (key) => {
@@ -57,6 +60,8 @@ export default function SettingsPanel() {
     },
   ]
 
+  const colorOptions = Object.keys(themes)
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -71,7 +76,7 @@ export default function SettingsPanel() {
           return (
             <div key={section.title}>
               <div className="flex items-center gap-2 mb-3">
-                <SectionIcon size={16} className="text-indigo-400" />
+                <SectionIcon size={16} style={{ color: 'var(--theme-light)' }} />
                 <span className="text-sm font-medium text-slate-300">{section.title}</span>
               </div>
               <div className="space-y-1">
@@ -103,21 +108,31 @@ export default function SettingsPanel() {
 
       {/* 테마 색상 */}
       <div className="mt-6">
-        <span className="text-sm font-medium text-slate-300 mb-3 block">테마 색상</span>
+        <div className="flex items-center gap-2 mb-3">
+          <Palette size={16} style={{ color: 'var(--theme-light)' }} />
+          <span className="text-sm font-medium text-slate-300">테마 색상</span>
+        </div>
         <div className="flex gap-3">
-          {['#6366f1', '#ec4899', '#10b981', '#f97316', '#3b82f6', '#8b5cf6'].map((color) => (
+          {colorOptions.map((color) => (
             <motion.button
               key={color}
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.9 }}
-              className="w-8 h-8 rounded-full border-2"
+              onClick={() => setThemeColor(color)}
+              className="w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all"
               style={{
                 backgroundColor: color,
-                borderColor: color === '#6366f1' ? 'white' : 'transparent',
+                borderColor: themeColor === color ? 'white' : 'transparent',
+                boxShadow: themeColor === color ? `0 0 16px ${color}80` : 'none',
               }}
-            />
+            >
+              {themeColor === color && <Check size={16} className="text-white" />}
+            </motion.button>
           ))}
         </div>
+        <p className="text-xs text-slate-500 mt-2">
+          현재: {themes[themeColor]?.name}
+        </p>
       </div>
     </motion.div>
   )
